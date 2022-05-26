@@ -1,4 +1,4 @@
-# Snorlax-Utilizes
+# Faction-Editor
 
 Factions
 
