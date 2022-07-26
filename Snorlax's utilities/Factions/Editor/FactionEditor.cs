@@ -25,6 +25,8 @@ namespace Snorlax.Factions
                 AssetDatabase.SaveAssets();
                 serializedObject.ApplyModifiedProperties();
             }
+
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("relations"));
         }
     }
 }

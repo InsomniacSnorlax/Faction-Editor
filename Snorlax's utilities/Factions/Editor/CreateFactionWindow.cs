@@ -1,11 +1,19 @@
 using UnityEngine;
 using UnityEditor;
+using Snorlax.Settings;
 
 namespace Snorlax.Factions
 {
-    public class CreateFactionWindow : ExtendedEditorWindow
+    public class CreateFactionWindow : EditorWindow
     {
         public Factions newFaction;
+        public SerializedObject serializedObject;
+        private Factions[] factions;
+        
+        private void OnInspectorUpdate()
+        {
+            Repaint();
+        }
 
         /// <summary>
         /// Creates new faction scriptableobject based on input values
@@ -13,20 +21,32 @@ namespace Snorlax.Factions
 
         private void OnGUI()
         {
-            serializedObject = new SerializedObject(newFaction);
-            DrawProperties(serializedObject);
+            EditorGUI.BeginChangeCheck();
+            {
+                DrawProperties(serializedObject);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+                EditorUtility.SetDirty(newFaction);
+            }
 
             if (GUILayout.Button("Save"))
             {
-                AssetDatabase.CreateAsset(newFaction, "Assets/Snorlax's utilities/Factions/ScriptableObject/" + newFaction.factionName + ".asset");
-                factions = GetAllInstances<Factions>();
-                NewRelations(newFaction);
+                SavePathEditor.SavePath(SavePathEditor.FactionKeyName, SavePathEditor.FactionSavePath, newFaction, newFaction.factionName);
+                factions = FactionHelper.GetAllInstances<Factions>();
+                FactionHelper.NewRelations(newFaction, factions);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
+                GetWindow<FactionListEditorWindow>().factions = factions;
                 Close();
             }
+        }
 
-            Apply();
+        public void Init(Factions newFaction)
+        {
+            this.newFaction = newFaction;
+            serializedObject = new SerializedObject(newFaction);
         }
 
         protected void DrawProperties(SerializedObject p)
