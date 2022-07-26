@@ -18,6 +18,11 @@ namespace Snorlax.Factions
         {
             for (int i = 0; i < relations.Length; i++)
             {
+                if (relations[i].faction == this)
+                {
+                    relations[i].relationValue = 100;
+                }
+
                 relations[i].currentRelationship = relations[i].valueRelationship;
                 this.name = factionName;
             }
@@ -31,7 +36,6 @@ namespace Snorlax.Factions
     /// </summary>
 
     [System.Serializable]
-
     public struct Relations
     {
         public Factions faction;
